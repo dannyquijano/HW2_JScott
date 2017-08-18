@@ -1,0 +1,45 @@
+---
+title: "Random Forest"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+##Take from here down to put into our final homeworkfile
+
+##Next we use Random Forest on our DTM to predict author
+
+```{r RF}
+library(randomForest)
+
+
+#set up train and test datasets using Xtrain and Xtest
+Xtrain = as.matrix(DTM) # Dense matrix
+TRdataset <- as.data.frame(Xtrain)
+TRdataset$answers <- labels #adding a column for the authors
+TRdataset$answers = factor(TRdataset$answers) # Encoding the target feature as factor
+Xtest = as.matrix(DTMtest) # Dense matrix
+TEdataset <- as.data.frame(Xtest)
+TEdataset$answers <- labelsTest #adding a column for the authors
+TEdataset$answers = factor(TEdataset$answers) # Encoding the target feature as factor
+
+#train the RF model
+RF <- randomForest(x = TRdataset[-1414], y = TRdataset$answers, ntree = 10)
+#use the RF model to predict on the test set
+y_pred <- predict(RF, newdata = TEdataset[-1414])
+
+
+
+#create a confusion matrix
+conf <- RF$confusion
+#show our errors errors for each author
+RF$confusion[, 'class.error']
+
+
+cm <- table(TEdataset[,1414], y_pred)
+cm['EricAuchard',]
+```
+
+The class errors shown explain our accuracy at predicting each author using the random forest model. Our model best predicts articles for authors like JimGilchrist, LynneO'Donnell, and LydiaZajc (their error rates are 20%, 24%, and 28%, respectively). Our model's worst predictions are for EricAuchard with 79% error. EricAuchard is often misclassified as SamuelPerry (9 out of 50 times).
