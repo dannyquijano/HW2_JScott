@@ -1,0 +1,67 @@
+---
+title: "HW2_Q3"
+output: 
+  md_document:
+    variant: markdown_github
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Q3:Practice with association rule mining
+
+```{r load_libraries}
+library(tm) 
+detach(package:tm, unload=TRUE)
+library(arules)  
+library(splitstackshape)
+```
+
+```{r get_data_ready}
+#read in the data
+groceries_raw <- read.csv('http://raw.githubusercontent.com/jgscott/STA380/master/data/groceries.txt', sep='\n', header=FALSE)
+
+#head(groceries_raw,12)
+
+#names the basket column
+groceries_raw$basket = rownames(groceries_raw)
+#split the string of items into individual rows
+groceries = cSplit(groceries_raw, "V1", direction='long', ",")
+#look at the first few items
+head(groceries)
+
+# Turn basket into a factor
+groceries$basket <- factor(groceries$basket)
+
+# First create a list of baskets: vectors of items by consumer
+# apriori algorithm expects a list of baskets in a special format
+# In this case, one "basket" of items per basket
+# First split data into a list of items for each basket
+baskets <- split(x=groceries$V1, f=groceries$basket)
+
+## Remove duplicates ("de-dupe")
+baskets <- lapply(baskets, unique)
+
+## Cast this variable as a special arules "transactions" class.
+baskettrans <- as(baskets, "transactions")
+```
+
+```{r run_apriori}
+# Now run the 'apriori' algorithm
+basketrules <- apriori(baskettrans, parameter=list(support=.01, confidence=.4, maxlen=4))
+
+# Look at the output
+inspect(basketrules)
+```
+
+#This list is our list of rules with support>.01, confidence>.4, and no more than 4 items per set. We see that "staple" items like milk and vegetable are most often predicted. This makes sense because with a support level of 1%, there will be very few combinations that are present in enough baskets to make it into our list with high confidence. Only the staple items are bought together frequently enough to qualify.
+
+```{r tune}
+#re-run rules
+basketrules <- apriori(baskettrans, parameter=list(support=.004, confidence=.4, maxlen=4))
+
+## Choose a subset
+inspect(subset(basketrules, subset=lift > 5))
+```
+#When we re-run the apriori rules with support lowered to .4%, we see many more rules involving items that aren't necessarily considered "staple" items. Some of these rules have a much higher lift since an item that is less common in the overall basket list can be predicted with higher confidence given some other items in the basket. For instance, we see that bottled beer is 5 times more likely to be in a basket given that the basket also contains liquor.
