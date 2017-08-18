@@ -1,9 +1,8 @@
-
-
-
 ## Author attribution
 
 library(tm)
+library(e1071)
+library(caret)
 
 # Remember to source in the "reader" wrapper function
 # it's stored as a Github gist at:
@@ -26,8 +25,9 @@ for(author in author_dirs) {
   file_list = append(file_list, files_to_add)
   labels = append(labels, rep(author_name, length(files_to_add)))
 }
-length(file_list)
-# Need a more clever regex to get better names here
+#length(file_list)
+
+# Apply readerPlain to file_list, name columns based on names file_list
 all_docs = lapply(file_list, readerPlain) 
 names(all_docs) = file_list
 names(all_docs) = sub('.txt', '', names(all_docs))
@@ -47,7 +47,7 @@ DTM
 class(DTM)  
 
 inspect(DTM[1:10,1:20])
-DTM = removeSparseTerms(DTM, 0.975)
+DTM = removeSparseTerms(DTM, 0.975) # only want words that are in 97% of docs
 DTM
 
 # Dense matrix
@@ -55,28 +55,28 @@ Xtrain = as.matrix(DTM)
 row.names(Xtrain) = file_list
 # X
 
-# Multinomial probability vector
-smooth_count = 1/nrow(Xtrain)
-w = colSums(Xtrain + smooth_count)
-w = w/sum(w)
+# # Multinomial probability vector
+# smooth_count = 1/nrow(Xtrain)
+# w = colSums(Xtrain + smooth_count)
+# w = w/sum(w)
 
 #########
 ## Now for test data:
 
 author_dirsTest = Sys.glob('~/Documents/GitHub/STA380/data/ReutersC50/C50test/*')
 #author_dirsTest = Sys.glob('http://raw.githubusercontent.com/jgscott/STA380/master/data/ReutersC50/C50test/*') 
-author_dirsTest = author_dirsTest[1:50]
 file_listTest = NULL
 labelsTest = NULL
-nchar('~/Documents/GitHub/STA380/data/ReutersC50/C50test/*')
+xTest = nchar('~/Documents/GitHub/STA380/data/ReutersC50/C50test/*')
 for(author in author_dirsTest) {
-  author_name = substring(author, first=51)
+  author_name = substring(author, first=xTest)
   files_to_add = Sys.glob(paste0(author, '/*.txt'))
   file_listTest = append(file_listTest, files_to_add)
-  labels = append(labels, rep(author_name, length(files_to_add)))
+  labelsTest = append(labelsTest, rep(author_name, length(files_to_add)))
 }
 length(file_listTest)
-# Need a more clever regex to get better names here
+
+
 all_docsTest = lapply(file_listTest, readerPlain) 
 names(all_docsTest) = file_listTest
 names(all_docsTest) = sub('.txt', '', names(all_docsTest))
@@ -93,51 +93,53 @@ my_corpusTest = tm_map(my_corpusTest, content_transformer(removePunctuation)) # 
 my_corpusTest = tm_map(my_corpusTest, content_transformer(stripWhitespace)) ## remove excess white-space
 my_corpusTest = tm_map(my_corpusTest, content_transformer(removeWords), stopwords("SMART"))
 
-DTMtest = DocumentTermMatrix(my_corpusTest)
-DTMtest # some basic summary statistics
+# Deal with words that weren't in train set:
+freqTrain = findFreqTerms(DTM, 1) # use only words that have appeared in DTM (train)
+length((freqTrain)) # 1411 -> same as number terms in DTM train
 
-class(DTMtest)  # a special kind of sparse matrix format
+# now 
+DTMtest = DocumentTermMatrix(my_corpusTest, control=list(dictionary = freqTrain))
+DTMtest 
 
-## You can inspect its entries...
+class(DTMtest)
+
 inspect(DTMtest[1:10,1:20])
-DTMtest = removeSparseTerms(DTMtest, 0.975)
-DTMtest
+# DTMtest = removeSparseTerms(DTMtest, 0.975)
+# DTMtest
 
 # Now a dense matrix
 Xtest = as.matrix(DTMtest)
 row.names(Xtest) = file_listTest
 
-# Predict on Xtest
 
-#DTMtest -> 1437 terms
-#DTM (train) -> 1411 terms
+# Boolean feature Multinomial Naive Bayes
 
-#levels(Xtest) = levels(Xtrain) # ignore new features
+convert_count = function(x) {
+  y = ifelse(x>0, 1, 0)
+  y = factor(y, levels=c(0,1), labels=c("No", "Yes"))
+  y
+}
 
+# Apply the convert_count function to get final training and testing DTMs
+trainNB = apply(DTM, 2, convert_count)
+testNB = apply(DTMtest, 2, convert_count)
 
-########
+# Train the classifier
+classifier = naiveBayes(trainNB, labels, laplace = 1) 
+nrow(trainNB)
+nrow(testNB)
 
+# Use the NB classifier we built to make predictions on the test set.
+pred = predict(classifier, newdata = testNB)
 
-## Lecture notes
-# Let's take a specific test document
-x_test = X[49,]
-head(sort(x_test, decreasing=TRUE), 25)
+# Create a truth table by tabulating the predicted class labels with the actual class labels 
+table("Predictions" = pred,  "Actual" = labelsTest)
 
-# Compare log probabilities under the Naive Bayes model
-sum(x_test*log(w_AP))
-sum(x_test*log(w_AC))
+conf.mat = confusionMatrix(pred, labelsTest)
 
-# Another test document
-x_test2 = X[99,]
-head(sort(x_test2, decreasing=TRUE), 25)
-sum(x_test2*log(w_AP))
-sum(x_test2*log(w_AC))
-########
-
-
-
-
-
+conf.mat$byClass
+conf.mat$overall
+conf.mat$overall['Accuracy']
 
 
 
