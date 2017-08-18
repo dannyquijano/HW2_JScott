@@ -233,9 +233,6 @@ testNB = as.data.frame(data.matrix(testNB),stringsAsfactors = FALSE)
 testNB = cbind(testNB,labelsTest)
 colnames(testNB)[ncol(testNB)] = "LabelsTest"
 
-classifier = trainNB[, "LabelsTrain"]
-model = trainNB[,!colnames(trainNB) %in% "LabelsTrain"]
-
 # Train the classifier
 classifier = naiveBayes(LabelsTrain~., data = trainNB, laplace = 1) 
 
