@@ -1,5 +1,5 @@
 ---
-title: 'STA 380 Homework 2: Mulcahy, Quijano, Reynolds'
+title: 'STA 380 Homework 2 Mulcahy, Quijano, Reynolds'
 author: "Daniel Quijano"
 date: "August 17, 2017"
 output:
@@ -8,6 +8,9 @@ output:
 ---
 
 ##1. Flights at ABIA
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
 
 ```{r}
 abia = read.csv('http://raw.githubusercontent.com/jgscott/STA380/master/data/ABIA.csv', header=TRUE)
@@ -71,22 +74,23 @@ readerPlain = function(fname){
 
 ```
 
-Rolling two directories together into a single corpus 
+ 
 ```{r}
-author_dirs = Sys.glob('~/GitHub/STA380/data/ReutersC50/C50train/*')
+author_dirs = Sys.glob('/Users/christinemcallister/Documents/Summer Semester/Predictive Models/Part2/STA380-master/data/ReutersC50/C50train/*')
 file_list = NULL
 labels = NULL
-x = nchar('C:/Users/Daniel/Documents/GitHub/STA380/data/ReutersC50/C50test/*')
+x = nchar('/Users/christinemcallister/Documents/Summer Semester/Predictive Models/Part2/STA380-master/data/ReutersC50/C50train/*')
 for(author in author_dirs) {
-  author_name = substring(author, first=x+1)
+  author_name = substring(author, first=x)
   files_to_add = Sys.glob(paste0(author, '/*.txt'))
   file_list = append(file_list, files_to_add)
   labels = append(labels, rep(author_name, length(files_to_add)))
 }
 ```
 
-Apply readerPlain to file_list, name columns based on names file_list
+
 ```{r}
+#Apply readerPlain to file_list, name columns based on names file_list
 all_docs = lapply(file_list, readerPlain) 
 names(all_docs) = file_list
 names(all_docs) = sub('.txt', '', names(all_docs))
@@ -94,8 +98,9 @@ my_corpus = Corpus(VectorSource(all_docs))
 
 ```
 
-Preprocessing & creating DTM
+
 ```{r}
+#Preprocessing & creating DTM
 my_corpus = tm_map(my_corpus, content_transformer(tolower)) # make everything lowercase
 my_corpus = tm_map(my_corpus, content_transformer(removeNumbers)) # remove numbers
 my_corpus = tm_map(my_corpus, content_transformer(removePunctuation)) # remove punctuation
@@ -113,14 +118,15 @@ DTM
 
 ```
 
-Now for test data:
+
 ```{r}
-author_dirsTest = Sys.glob('~/GitHub/STA380/data/ReutersC50/C50test/*')
+#Now for test data:
+author_dirsTest = Sys.glob('/Users/christinemcallister/Documents/Summer Semester/Predictive Models/Part2/STA380-master/data/ReutersC50/C50test/*')
 file_listTest = NULL
 labelsTest = NULL
-xTest = nchar('C:/Users/Daniel/Documents/GitHub/STA380/data/ReutersC50/C50test/*')
+xT = nchar('/Users/christinemcallister/Documents/Summer Semester/Predictive Models/Part2/STA380-master/data/ReutersC50/C50test/*')
 for(author in author_dirsTest) {
-  author_name = substring(author, first=xTest)
+  author_name = substring(author, first=xT)
   files_to_add = Sys.glob(paste0(author, '/*.txt'))
   file_listTest = append(file_listTest, files_to_add)
   labelsTest = append(labelsTest, rep(author_name, length(files_to_add)))
@@ -157,17 +163,19 @@ inspect(DTMtest[1:10,1:20])
 
 ## We will try Naive Bayes and Random Forests
 
-First, Naive Bayes:
-Boolean feature Multinomial Naive Bayes
+
 ```{r}
+#First, Naive Bayes:
+#Boolean feature Multinomial Naive Bayes
 convert_count = function(x) {
   y = ifelse(x>0, 1, 0)
   y = factor(y, levels=c(0,1), labels=c("No", "Yes"))
   y}
 ```
 
-Apply the convert_count function to get final training and testing DTMs
+
 ```{r}
+#Apply the convert_count function to get final training and testing DTMs
 trainNB = apply(DTM, 2, convert_count)
 trainNB = as.matrix(trainNB)
 row.names(trainNB) = file_list
@@ -181,8 +189,9 @@ row.names(testNB) = file_listTest
 testNB$answer = as.factor(labelsTest)
 ```
 
-Train the classifier
+
 ```{r}
+#Train the classifier
 classifier = naiveBayes(answer ~ ., data = trainNB, laplace = 1)  
 
 # Use the NB classifier we built to make predictions on the test set.
