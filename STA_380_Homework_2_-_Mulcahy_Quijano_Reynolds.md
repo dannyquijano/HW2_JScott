@@ -392,31 +392,31 @@ RF$confusion[, 'class.error']
 ```
 
     ##     AaronPressman        AlanCrosby    AlexanderSmith   BenjaminKangLim 
-    ##         0.3673469         0.2040816         0.6382979         0.6875000 
+    ##         0.3600000         0.2600000         0.6122449         0.6800000 
     ##     BernardHickey       BradDorfman  DarrenSchuettler       DavidLawder 
-    ##         0.4285714         0.6666667         0.1800000         0.2600000 
+    ##         0.5000000         0.6400000         0.2600000         0.1632653 
     ##     EdnaFernandes       EricAuchard    FumikoFujisaki    GrahamEarnshaw 
-    ##         0.6000000         0.6875000         0.3061224         0.3800000 
+    ##         0.6800000         0.6938776         0.3000000         0.3265306 
     ##  HeatherScoffield     JaneMacartney        JanLopatka      JimGilchrist 
-    ##         0.3265306         0.7200000         0.3600000         0.1875000 
+    ##         0.1800000         0.6600000         0.3600000         0.2244898 
     ##          JoeOrtiz      JohnMastrini      JonathanBirt    JoWinterbottom 
-    ##         0.6000000         0.4200000         0.5600000         0.4800000 
+    ##         0.5600000         0.5000000         0.6734694         0.4489796 
     ##       KarlPenhaul         KeithWeir    KevinDrawbaugh     KevinMorrison 
-    ##         0.5200000         0.6400000         0.7000000         0.5208333 
+    ##         0.3877551         0.4600000         0.5000000         0.4893617 
     ##     KirstinRidley KouroshKarimkhany         LydiaZajc    LynneO'Donnell 
-    ##         0.5600000         0.3200000         0.2291667         0.2800000 
+    ##         0.6800000         0.4680851         0.3400000         0.3200000 
     ##   LynnleyBrowning   MarcelMichelson      MarkBendeich        MartinWolk 
-    ##         0.2600000         0.2800000         0.6122449         0.5000000 
+    ##         0.2600000         0.3600000         0.5918367         0.5400000 
     ##      MatthewBunce     MichaelConnor        MureDickie         NickLouth 
-    ##         0.3400000         0.5400000         0.7000000         0.5400000 
+    ##         0.4000000         0.6666667         0.7600000         0.3958333 
     ##   PatriciaCommins     PeterHumphrey        PierreTran        RobinSidel 
-    ##         0.4400000         0.3469388         0.4897959         0.3800000 
+    ##         0.5800000         0.3265306         0.4285714         0.3600000 
     ##      RogerFillion       SamuelPerry      SarahDavison       ScottHillis 
-    ##         0.3200000         0.5306122         0.6000000         0.6734694 
+    ##         0.2800000         0.6400000         0.6530612         0.7346939 
     ##       SimonCowell          TanEeLyn    TheresePoletti        TimFarrand 
-    ##         0.6200000         0.6000000         0.6600000         0.6400000 
+    ##         0.6122449         0.6600000         0.6000000         0.6458333 
     ##        ToddNissen      WilliamKazer 
-    ##         0.3400000         0.8000000
+    ##         0.3600000         0.6200000
 
 ``` r
 cm <- table(TEdataset[,rfcol], y_pred)
@@ -424,31 +424,31 @@ cm['EricAuchard',]
 ```
 
     ##     AaronPressman        AlanCrosby    AlexanderSmith   BenjaminKangLim 
-    ##                 5                 2                 0                 1 
+    ##                 7                 2                 0                 0 
     ##     BernardHickey       BradDorfman  DarrenSchuettler       DavidLawder 
-    ##                 1                 2                 3                 1 
+    ##                 1                 2                 0                 2 
     ##     EdnaFernandes       EricAuchard    FumikoFujisaki    GrahamEarnshaw 
-    ##                 0                 4                 0                 1 
+    ##                 0                 0                 1                 4 
     ##  HeatherScoffield     JaneMacartney        JanLopatka      JimGilchrist 
-    ##                 1                 0                 0                 0 
+    ##                 3                 1                 0                 1 
     ##          JoeOrtiz      JohnMastrini      JonathanBirt    JoWinterbottom 
-    ##                 6                 0                 0                 0 
+    ##                 0                 1                 0                 0 
     ##       KarlPenhaul         KeithWeir    KevinDrawbaugh     KevinMorrison 
-    ##                 1                 0                 0                 0 
+    ##                 5                 1                 0                 0 
     ##     KirstinRidley KouroshKarimkhany         LydiaZajc    LynneO'Donnell 
-    ##                 0                 2                 4                 0 
-    ##   LynnleyBrowning   MarcelMichelson      MarkBendeich        MartinWolk 
-    ##                 0                 1                 1                 0 
-    ##      MatthewBunce     MichaelConnor        MureDickie         NickLouth 
-    ##                 3                 0                 0                 0 
-    ##   PatriciaCommins     PeterHumphrey        PierreTran        RobinSidel 
-    ##                 1                 0                 0                 7 
-    ##      RogerFillion       SamuelPerry      SarahDavison       ScottHillis 
-    ##                 0                 1                 0                 1 
-    ##       SimonCowell          TanEeLyn    TheresePoletti        TimFarrand 
     ##                 0                 0                 0                 0 
+    ##   LynnleyBrowning   MarcelMichelson      MarkBendeich        MartinWolk 
+    ##                 0                 0                 0                 1 
+    ##      MatthewBunce     MichaelConnor        MureDickie         NickLouth 
+    ##                 4                 1                 0                 1 
+    ##   PatriciaCommins     PeterHumphrey        PierreTran        RobinSidel 
+    ##                 0                 0                 1                 5 
+    ##      RogerFillion       SamuelPerry      SarahDavison       ScottHillis 
+    ##                 2                 1                 0                 0 
+    ##       SimonCowell          TanEeLyn    TheresePoletti        TimFarrand 
+    ##                 1                 1                 0                 0 
     ##        ToddNissen      WilliamKazer 
-    ##                 1                 0
+    ##                 0                 1
 
 The class errors shown explain our accuracy at predicting each author using the random forest model. Our model best predicts articles for authors like JimGilchrist, LynneO'Donnell, and LydiaZajc (their error rates are 20%, 24%, and 28%, respectively). Our model's worst predictions are for EricAuchard with 79% error. EricAuchard is often misclassified as SamuelPerry (9 out of 50 times).
 
@@ -548,7 +548,7 @@ basketrules <- apriori(baskettrans, parameter=list(support=.01, confidence=.4, m
     ## set item appearances ...[0 item(s)] done [0.00s].
     ## set transactions ...[169 item(s), 9835 transaction(s)] done [0.00s].
     ## sorting and recoding items ... [88 item(s)] done [0.00s].
-    ## creating transaction tree ... done [0.02s].
+    ## creating transaction tree ... done [0.00s].
     ## checking subsets of size 1 2 3 4
 
     ## Warning in apriori(baskettrans, parameter = list(support = 0.01, confidence
@@ -696,7 +696,7 @@ basketrules <- apriori(baskettrans, parameter=list(support=.004, confidence=.4, 
     ## confidence = 0.4, : Mining stopped (maxlen reached). Only patterns up to a
     ## length of 4 returned!
 
-    ##  done [0.00s].
+    ##  done [0.02s].
     ## writing ... [432 rule(s)] done [0.00s].
     ## creating S4 object  ... done [0.00s].
 
